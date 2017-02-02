@@ -143,7 +143,7 @@ impl CookieStr {
 ///     .http_only(true)
 ///     .finish();
 /// ```
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Cookie<'c> {
     /// Storage for the cookie string. Only used if this structure was derived
     /// from a string that was subsequently parsed.
@@ -164,6 +164,34 @@ pub struct Cookie<'c> {
     secure: bool,
     /// Whether this cookie was marked httponly.
     http_only: bool,
+}
+
+impl<'c> Clone for Cookie<'c> {
+    fn clone<'n>(&self) -> Cookie<'n> {
+        Cookie {
+            cookie_string: self.cookie_string.clone().map(|s| s.into_owned().into()),
+            name: self.name.clone(),
+            value: self.value.clone(),
+            expires: self.expires.clone(),
+            max_age: self.max_age.clone(),
+            domain: self.domain.clone(),
+            path: self.path.clone(),
+            secure: self.secure.clone(),
+            http_only: self.http_only.clone(),
+        }
+    }
+
+    fn clone_from(&mut self, source: &Self) {
+        self.cookie_string = source.cookie_string.clone().map(|s| s.into_owned().into());
+        self.name = source.name.clone();
+        self.value = source.value.clone();
+        self.expires = source.expires.clone();
+        self.max_age = source.max_age.clone();
+        self.domain = source.domain.clone();
+        self.path = source.path.clone();
+        self.secure = source.secure.clone();
+        self.http_only = source.http_only.clone();
+    }
 }
 
 impl Cookie<'static> {
